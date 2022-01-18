@@ -8,20 +8,16 @@ export abstract class EntityRepository<T extends Document> {
     projection?: Record<string, unknown>,
   ): Promise<T | null> {
     return this.entityModel
-      .findOne(
-        entityFilterQuery,
-        {
-          _id: 0,
-          __v: 0,
-          ...projection,
-        },
-        { lean: true },
-      )
+      .findOne(entityFilterQuery, {
+        _id: 0,
+        __v: 0,
+        ...projection,
+      })
       .exec();
   }
 
-  async find(entityFilterQuery?: FilterQuery<T>): Promise<T[] | null> {
-    return this.entityModel.find(entityFilterQuery, {}, { lean: true });
+  async find(entityFilterQuery: FilterQuery<T>): Promise<T[] | null> {
+    return this.entityModel.find(entityFilterQuery);
   }
 
   async create(createEntityData: unknown): Promise<T> {
@@ -42,9 +38,7 @@ export abstract class EntityRepository<T extends Document> {
     );
   }
 
-  protected async deleteMany(
-    entityFilterQuery: FilterQuery<T>,
-  ): Promise<boolean> {
+  async deleteMany(entityFilterQuery: FilterQuery<T>): Promise<boolean> {
     const deleteResult = await this.entityModel.deleteMany(entityFilterQuery);
     return deleteResult.deletedCount >= 1;
   }
